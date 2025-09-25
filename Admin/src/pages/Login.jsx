@@ -4,6 +4,7 @@ import { IoMdEye, IoIosEyeOff } from "react-icons/io";
 import axios from 'axios'
 import { authDataContext } from '../context/AuthContext';
 import { adminDataContext } from '../context/AdminContext';
+import { useNavigate } from "react-router-dom"
 const Login = () => {
 
   const [show, setShow] = useState(false);
@@ -11,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   let {serverUrl}=useContext(authDataContext)
   let {AdminData,getAdmin}=useContext(adminDataContext);
-
+  let navigate=useNavigate();
 
   const AdminLogin=async (e) => {
     e.preventDefault();
