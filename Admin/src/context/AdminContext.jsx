@@ -16,7 +16,7 @@ function AdminContext({ children }) {
     }
 
     try {
-      // ✅ Fixed URL + switched to POST to match backend
+
       const result = await axios.post(
         `${serverUrl}/api/user/getadmin`,
         {}, // empty body since backend expects POST

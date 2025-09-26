@@ -19,7 +19,8 @@ const Login = () => {
     try {
         const result=await axios.post(serverUrl+'/api/auth/adminlogin',{email,password},{withCredentials:true})
         console.log(result.data);
-        
+        getAdmin()
+        navigate("/")
     } catch (error) {
         console.log(error);
         
@@ -37,7 +38,7 @@ const Login = () => {
               <span className="text-[25px] font-semibold">Login Page</span>
               <span className="text-[16px]">Welcome to shoppingCart, Apply to admin login</span>
             </div>
-            <div className='max-w-[600px] w-[90%] min-h-[400px] py-4 bg-[#00000025] border-[1px] border-[#96969635] backdrop-blur-2xl rounded-lg shadow-lg flex items-center justify-center'>
+            <div className='max-w-[600px] w-[90%] min-h-[50px] py-4 bg-[#00000025] border-[1px] border-[#96969635] backdrop-blur-2xl rounded-lg shadow-lg flex items-center justify-center'>
               <form onSubmit={AdminLogin} className="w-[90%] h-full flex flex-col items-center justify-start gap-[20px]">
                 
                 <div className='w-[90%] flex flex-col items-center justify-center gap-[15px]'>
