@@ -1,6 +1,4 @@
 # AI-Powered-E-Commerce-Website
-
-An AI-Powered E-Commerce Website that enhances online shopping by providing personalized product recommendations, intelligent search, and chatbot-based customer support
 I recently built an AI-powered e-commerce platform designed to enhance the online shopping experience through personalization, intelligent search, and automation.
 
 🔹 Key Features:
