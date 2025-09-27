@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import Logo from "../assets/logo.png";
 import google from "../assets/google.png";
-import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import { IoMdEye, IoIosEyeOff } from "react-icons/io";
 import { authDataContext } from "../context/authContext";
 import { signInWithPopup } from "firebase/auth";
@@ -15,79 +15,101 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { serverUrl } = useContext(authDataContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const { getCurrentUser } = useContext(userDataContext);
 
+  // Normal email/password login
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const result = await axios.post(
-        serverUrl + '/api/auth/login',
+        serverUrl + "/api/auth/login",
         { email, password },
         { withCredentials: true }
       );
-
-      console.log(result.data);
+      console.log("Login response:", result.data);
       if (result.data.user?._id) {
-        await getCurrentUser(); 
-        navigate("/");
+        await getCurrentUser();
+        navigate(location.state?.from || "/"); // redirect to last page or home
       }
     } catch (error) {
-      console.log(error);
+      console.log("Login error:", error);
     }
   };
 
+  // Google login
   const googleLogin = async () => {
     try {
       const response = await signInWithPopup(auth, provider);
       const { displayName, email } = response.user;
-
       const result = await axios.post(
         serverUrl + "/api/auth/googlelogin",
         { name: displayName, email },
         { withCredentials: true }
       );
-      console.log(result.data);
-
+      console.log("Google login response:", result.data);
       if (result.data.user?._id) {
-        await getCurrentUser(); 
-        navigate("/");
+        await getCurrentUser();
+        navigate(location.state?.from || "/"); // redirect after google login
       }
     } catch (error) {
-      console.log(error);
+      console.log("Google login error:", error);
     }
   };
 
   return (
     <div className="w-[100vw] h-[100vh] bg-gradient-to-r from-[#141414] to-[#0c2025] text-white flex flex-col items-center justify-start">
-      <div className="w-[100%] h-[80px] flex items-center justify-start px-[30px] gap-[10px] cursor-pointer" onClick={() => navigate("/")}>
+      {/* Logo */}
+      <div className="w-[100%] h-[80px] flex items-center justify-start px-[30px] gap-[10px] cursor-pointer" onClick={() => navigate("/")} >
         <img className="w-[40px]" src={Logo} alt="Logo" />
         <h1 className="text-[22px] font-sans">ShoppingCart</h1>
       </div>
+
+      {/* Page heading */}
       <div className="w-[100%] h-[100px] flex items-center justify-center flex-col gap-[10px]">
         <span className="text-[25px] font-semibold">Login Page</span>
-        <span className="text-[16px]">Welcome back to shoppingCart</span>
+        <span className="text-[16px]">Welcome back to ShoppingCart</span>
       </div>
-      <div className='max-w-[600px] w-[90%] min-h-[500px] py-4 bg-[#00000025] border-[1px] border-[#96969635] backdrop-blur-2xl rounded-lg shadow-lg flex items-center justify-center'>
-        <form onSubmit={handleLogin} className="w-[90%] h-full flex flex-col items-center justify-start gap-[20px]">
-          <div className='w-[90%] h-[50px] bg-[#42656cae] rounded-lg flex items-center justify-center gap-[10px] py-[20px] cursor-pointer' onClick={googleLogin}>
-            <img src={google} alt="Google Icon" className='w-[20px]' /> Sign in with Google
+
+      {/* Form box */}
+      <div className="max-w-[600px] w-[90%] min-h-[500px] py-4 bg-[#00000025] border-[1px] border-[#96969635] backdrop-blur-2xl rounded-lg shadow-lg flex items-center justify-center">
+        <form onSubmit={handleLogin} className="w-[90%] h-full flex flex-col items-center justify-start gap-[20px]" >
+
+          {/* Google button */}
+          <div className="w-[90%] h-[50px] bg-[#42656cae] rounded-lg flex items-center justify-center gap-[10px] py-[20px] cursor-pointer" onClick={googleLogin} >
+            <img src={google} alt="Google Icon" className="w-[20px]" /> Sign in with Google
           </div>
+
+          {/* Divider */}
           <div className="w-[100%] h-[20px] flex items-center justify-center gap-[10px]">
-            <div className="w-[40%] h-[1px] bg-[#96969635]"></div>
-            OR
-            <div className="w-[40%] h-[1px] bg-[#96969635]"></div>
+            <div className="w-[40%] h-[1px] bg-[#96969635]"></div> OR <div className="w-[40%] h-[1px] bg-[#96969635]"></div>
           </div>
-          <div className='w-[90%] flex flex-col items-center justify-center gap-[15px]'>
-            <input type="email" className='w-[100%] h-[50px] border-[2px] border-[#96969635] backdrop-blur-sm rounded-lg shadow-lg bg-transparent text-white px-[20px] font-semibold placeholder-[#ffffffc7]' placeholder='Email' required onChange={(e) => setEmail(e.target.value)} value={email} />
+
+          {/* Inputs */}
+          <div className="w-[90%] flex flex-col items-center justify-center gap-[15px]">
+            <input type="email" className="w-[100%] h-[50px] border-[2px] border-[#96969635] backdrop-blur-sm rounded-lg shadow-lg bg-transparent text-white px-[20px] font-semibold placeholder-[#ffffffc7]" placeholder="Email" required onChange={(e) => setEmail(e.target.value)} value={email} />
+            {/* Password with eye toggle */}
             <div className="relative w-[100%]">
-              <input type={show ? "text" : "password"} className='w-full h-[50px] border-[2px] border-[#96969635] backdrop-blur-sm rounded-lg shadow-lg bg-transparent text-white px-[20px] font-semibold placeholder-[#ffffffc7]' placeholder='Password' required onChange={(e) => setPassword(e.target.value)} value={password} />
-              <div className="absolute inset-y-0 right-4 flex items-center cursor-pointer" onClick={() => setShow(prev => !prev)}>
+              <input type={show ? "text" : "password"} className="w-full h-[50px] border-[2px] border-[#96969635] backdrop-blur-sm rounded-lg shadow-lg bg-transparent text-white px-[20px] font-semibold placeholder-[#ffffffc7]" placeholder="Password" required onChange={(e) => setPassword(e.target.value)} value={password} />
+              <div className="absolute inset-y-0 right-4 flex items-center cursor-pointer" onClick={() => setShow((prev) => !prev)} >
                 {show ? <IoMdEye size={22} /> : <IoIosEyeOff size={22} />}
               </div>
             </div>
-            <button type="submit" className='w-[100%] h-[50px] cursor-pointer bg-[#6060f5] rounded-lg flex items-center justify-center mt-[20px] text-[17px] font-semibold'>Login</button>
-            <p className='flex gap-[10px]'>Don't have an account? <span className='text-[#5555f6cf] text-[17px] font-semibold cursor-pointer' onClick={() => navigate("/signup")}>Sign up</span></p>
+
+            {/* Submit button */}
+            <button type="submit" className="w-[100%] h-[50px] cursor-pointer bg-[#6060f5] rounded-lg flex items-center justify-center mt-[20px] text-[17px] font-semibold" >
+              Login
+            </button>
+
+            {/* Redirect to signup */}
+            <p className="flex gap-[10px]">
+              Don't have an account?{" "}
+              <span className="text-[#5555f6cf] text-[17px] font-semibold cursor-pointer" onClick={() => navigate("/signup")} >
+                Sign up
+              </span>
+            </p>
           </div>
+
         </form>
       </div>
     </div>

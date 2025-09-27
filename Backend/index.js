@@ -8,12 +8,12 @@ import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 
 dotenv.config();
-
 const app = express();
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173","http://localhost:5174"],
+    origin: ["http://localhost:5173","http://localhost:5174","http://localhost:5175"], // added 5175
     credentials: true
 }));
 
