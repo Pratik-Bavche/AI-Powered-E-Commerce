@@ -3,13 +3,42 @@ import Product from "../model/productModel.js";
 
 export const addProduct = async (req, res) => {
     try {
-        let { name, description, price, category, subCategory, sizes, bestseller } = req.body;
+        let { name, description, price, category, subCategory, sizes, bestseller, images } = req.body;
 
-        // Upload images to Cloudinary only if files exist
-        let image1 = req.files?.image1 ? await uploadOnCloudinary(req.files.image1[0].path) : null;
-        let image2 = req.files?.image2 ? await uploadOnCloudinary(req.files.image2[0].path) : null;
-        let image3 = req.files?.image3 ? await uploadOnCloudinary(req.files.image3[0].path) : null;
-        let image4 = req.files?.image4 ? await uploadOnCloudinary(req.files.image4[0].path) : null;
+        // Upload base64 images to Cloudinary
+        let image1 = null;
+        let image2 = null;
+        let image3 = null;
+        let image4 = null;
+
+        if (images && images.length > 0) {
+            console.log(`Received ${images.length} images to upload`);
+            console.log('Images data:', images.map((img, i) => `Image ${i + 1}: ${img ? 'Present' : 'Null'}`));
+            
+            // Upload each base64 image to Cloudinary
+            for (let i = 0; i < Math.min(images.length, 4); i++) {
+                if (images[i]) {
+                    try {
+                        console.log(`Uploading image ${i + 1} to Cloudinary...`);
+                        const uploadResult = await uploadOnCloudinary(images[i]);
+                        console.log(`Image ${i + 1} upload result:`, uploadResult);
+                        
+                        if (i === 0) image1 = uploadResult;
+                        else if (i === 1) image2 = uploadResult;
+                        else if (i === 2) image3 = uploadResult;
+                        else if (i === 3) image4 = uploadResult;
+                        
+                        console.log(`Image ${i + 1} uploaded to Cloudinary successfully:`, uploadResult);
+                    } catch (uploadError) {
+                        console.error(`Error uploading image ${i + 1} to Cloudinary:`, uploadError);
+                    }
+                } else {
+                    console.log(`Image ${i + 1} is null, skipping upload`);
+                }
+            }
+        } else {
+            console.log('No images received in request');
+        }
 
         const productData = {
             name,
@@ -17,8 +46,8 @@ export const addProduct = async (req, res) => {
             price: Number(price),
             category,
             subCategory,
-            sizes: JSON.parse(sizes),
-            bestseller: bestseller === "true",
+            sizes: Array.isArray(sizes) ? sizes : JSON.parse(sizes || "[]"),
+            bestSeller: bestseller === "true" || bestseller === true,
             date: Date.now(),
             image1,
             image2,
