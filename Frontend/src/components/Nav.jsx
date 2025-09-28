@@ -9,11 +9,13 @@ import axios from 'axios';
 import { authDataContext } from '../context/authContext';
 import { IoMdHome, IoMdCart } from "react-icons/io";
 import { HiOutlineCollection } from "react-icons/hi";
+import { shopDataContext } from '../context/ShopContext';
 
 const Nav = () => {
   let { getCurrentUser, userData } = useContext(userDataContext);
   let { serverUrl } = useContext(authDataContext);
-  const [showSearch, setShowSearch] = useState(false);
+  const { showSearch, setShowSearch, search, setSearch } = useContext(shopDataContext);
+
   const [showProfile, setShowProfile] = useState(false);
   let navigate = useNavigate();
 
@@ -46,7 +48,7 @@ const Nav = () => {
 
       {/* Right Icons */}
       <div className='w-[30%] flex items-center justify-end gap-[20px] relative'>
-        {!showSearch && <IoSearchCircleOutline className='w-[38px] h-[38px] text-[#000000] cursor-pointer' onClick={() => setShowSearch(prev => !prev)} />}
+        {!showSearch && <IoSearchCircleOutline className='w-[38px] h-[38px] text-[#000000] cursor-pointer' onClick={() => {setShowSearch(prev => !prev);navigate("/collections")}} />}
         {showSearch && <IoSearchCircleSharp className='w-[38px] h-[38px] text-[#000000] cursor-pointer' onClick={() => setShowSearch(prev => !prev)} />}
 
         {/* User Avatar */}

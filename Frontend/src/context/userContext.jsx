@@ -6,6 +6,8 @@ export const userDataContext = createContext();
 
 const UserContext = ({ children }) => {
   const [userData, setUserData] = useState(null);
+  let [search,setSearch]=useState('')
+  let [showSearch,setShowSearch]=useState(false)
   const { serverUrl } = useContext(authDataContext);
 
   // Fetch current user from backend
@@ -33,7 +35,10 @@ const UserContext = ({ children }) => {
   const value = {
     userData,
     setUserData,
-    getCurrentUser
+    getCurrentUser,
+    search,
+    setSearch
+    ,showSearch,setShowSearch
   };
 
   return (
