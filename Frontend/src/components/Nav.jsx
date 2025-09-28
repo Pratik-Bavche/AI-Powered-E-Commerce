@@ -48,7 +48,7 @@ const Nav = () => {
 
       {/* Right Icons */}
       <div className='w-[30%] flex items-center justify-end gap-[20px] relative'>
-        {!showSearch && <IoSearchCircleOutline className='w-[38px] h-[38px] text-[#000000] cursor-pointer' onClick={() => {setShowSearch(prev => !prev);navigate("/collections")}} />}
+        {!showSearch && <IoSearchCircleOutline className='w-[38px] h-[38px] text-[#000000] cursor-pointer' onClick={() => {setShowSearch(true); navigate("/collection");}} />}
         {showSearch && <IoSearchCircleSharp className='w-[38px] h-[38px] text-[#000000] cursor-pointer' onClick={() => setShowSearch(prev => !prev)} />}
 
         {/* User Avatar */}
@@ -72,7 +72,13 @@ const Nav = () => {
       {/* Full-width Search Bar */}
       {showSearch && (
         <div className='w-full h-[80px] bg-[#d8f6f9dd] absolute top-[70px] left-0 flex items-center justify-center z-50'>
-          <input type="text" className='lg:w-[70%] w-[80%] h-[60%] bg-[#233533] rounded-[30px] px-[50px] placeholder:text-white text-white text-[18px]' placeholder='Search Here' />
+          <input 
+            type="text" 
+            className='lg:w-[70%] w-[80%] h-[60%] bg-[#233533] rounded-[30px] px-[50px] placeholder:text-white text-white text-[18px]' 
+            placeholder='Search Here' 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
       )}
 

@@ -7,13 +7,14 @@ import Card from "../components/Card";
 const Collections = () => {
   const [showFilter, setShowFilter] = useState(false);
 
-  const { products } = useContext(shopDataContext);
+  const { products, search, setSearch, showSearch, setShowSearch } =
+    useContext(shopDataContext);
   const [filterProduct, setFilterProduct] = useState([]);
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState("relevant");
 
-  // ✅ Toggle category
+  // Toggle category
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -22,7 +23,7 @@ const Collections = () => {
     }
   };
 
-  // ✅ Toggle sub-category
+  // Toggle sub-category
   const toggleSubCategory = (e) => {
     if (subCategory.includes(e.target.value)) {
       setSubCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -31,9 +32,18 @@ const Collections = () => {
     }
   };
 
-  // ✅ Apply filter
+  // Apply filters + search + sort
   const applyFilter = () => {
     let productCopy = [...products];
+
+    if (search.trim() !== "") {
+      productCopy = productCopy.filter(
+        (item) =>
+          item.name.toLowerCase().includes(search.toLowerCase()) ||
+          item.category.toLowerCase().includes(search.toLowerCase()) ||
+          item.subCategory.toLowerCase().includes(search.toLowerCase())
+      );
+    }
 
     if (category.length > 0) {
       productCopy = productCopy.filter((item) =>
@@ -47,7 +57,6 @@ const Collections = () => {
       );
     }
 
-    // Sorting logic
     if (sortType === "low-high") {
       productCopy.sort((a, b) => a.price - b.price);
     } else if (sortType === "high-low") {
@@ -63,10 +72,10 @@ const Collections = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subCategory, sortType]);
+  }, [category, subCategory, sortType, search]);
 
   return (
-    <div className="w-[99vw] min-h-[100vh] bg-gradient-to-l from-[#141414] to-[#0c2025] flex flex-col md:flex-row items-start justify-start pt-[70px] overflow-x-hidden z-2">
+    <div className="w-[99vw] min-h-[100vh] bg-gradient-to-l from-[#141414] to-[#0c2025] flex flex-col md:flex-row items-start justify-start pt-[70px] overflow-x-hidden z-2 pb-[100px]">
       {/* Sidebar Filters */}
       <div
         className={`md:w-[30vw] lg:w-[20vw] w-[100vw] md:min-h-[100vh] p-[20px] border-r border-[1px] border-gray-400 text-[#aaf5fa] lg:fixed ${
@@ -90,33 +99,20 @@ const Collections = () => {
         >
           <p className="text-[18px] text-[#f8fafa]">CATEGORIES</p>
           <div className="flex flex-col items-start justify-start gap-[10px] mt-2">
-            <label className="flex items-center gap-[10px] text-[16px] font-light">
-              <input
-                type="checkbox"
-                value="Men"
-                className="w-3 h-3"
-                onChange={toggleCategory}
-              />{" "}
-              Men
-            </label>
-            <label className="flex items-center gap-[10px] text-[16px] font-light">
-              <input
-                type="checkbox"
-                value="Woman"
-                className="w-3 h-3"
-                onChange={toggleCategory}
-              />{" "}
-              Woman
-            </label>
-            <label className="flex items-center gap-[10px] text-[16px] font-light">
-              <input
-                type="checkbox"
-                value="Kids"
-                className="w-3 h-3"
-                onChange={toggleCategory}
-              />{" "}
-              Kids
-            </label>
+            {["Men", "Woman", "Kids"].map((cat) => (
+              <label
+                key={cat}
+                className="flex items-center gap-[10px] text-[16px] font-light"
+              >
+                <input
+                  type="checkbox"
+                  value={cat}
+                  className="w-3 h-3"
+                  onChange={toggleCategory}
+                />{" "}
+                {cat}
+              </label>
+            ))}
           </div>
         </div>
 
@@ -128,39 +124,29 @@ const Collections = () => {
         >
           <p className="text-[18px] text-[#f8fafa]">SUB-CATEGORIES</p>
           <div className="flex flex-col items-start justify-start gap-[10px] mt-2">
-            <label className="flex items-center gap-[10px] text-[16px] font-light">
-              <input
-                type="checkbox"
-                value="TopWear"
-                className="w-3 h-3"
-                onChange={toggleSubCategory}
-              />{" "}
-              TopWear
-            </label>
-            <label className="flex items-center gap-[10px] text-[16px] font-light">
-              <input
-                type="checkbox"
-                value="BottomWear"
-                className="w-3 h-3"
-                onChange={toggleSubCategory}
-              />{" "}
-              BottomWear
-            </label>
-            <label className="flex items-center gap-[10px] text-[16px] font-light">
-              <input
-                type="checkbox"
-                value="WinterWear"
-                className="w-3 h-3"
-                onChange={toggleSubCategory}
-              />{" "}
-              WinterWear
-            </label>
+            {["TopWear", "BottomWear", "WinterWear"].map((sub) => (
+              <label
+                key={sub}
+                className="flex items-center gap-[10px] text-[16px] font-light"
+              >
+                <input
+                  type="checkbox"
+                  value={sub}
+                  className="w-3 h-3"
+                  onChange={toggleSubCategory}
+                />{" "}
+                {sub}
+              </label>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 md:ml-[30vw] lg:ml-[20vw] p-5">
+        {/* Search Bar controlled by Nav icon */}
+        {showSearch && <div className="w-full flex justify-center mt-8"></div>}
+
         {/* ALL COLLECTIONS header + sort dropdown */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mt-10">
           <Title text1="ALL" text2="COLLECTIONS" />
