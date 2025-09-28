@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Nav from '../components/Nav';
 import Background from '../components/Background';
 import Hero from '../components/Hero';
+import Product from './Product';
 
 const Home = () => {
   const heroData = [
@@ -27,6 +28,7 @@ const Home = () => {
         <Hero heroCount={heroCount} setHeroCount={setHeroCount} heroData={heroData[heroCount]} />
         <Nav />
       </div>
+      <Product/>
     </div>
   );
 }
