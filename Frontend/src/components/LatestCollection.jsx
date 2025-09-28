@@ -8,7 +8,7 @@ const LatestCollection = () => {
     let [latestProducts,setLatestProducts]=useState([]);
 
     useEffect(()=>{
-        setLatestProducts(products.slice(0,8));
+        setLatestProducts(products.slice(-8));
     },[products])
 
   return (
@@ -21,9 +21,9 @@ const LatestCollection = () => {
             </div>
            <div className='w-[100%] h-[50%] mt-[30px] flex items-center justify-center flex-wrap gap-[50px]'>
                     {
-                        latestProducts.map((item,index)=>{
+                        latestProducts.map((item,index)=> (
                             <Card key={index} name={item.name} image={item.image1} id={item._id} price={item.price}/>
-                        })
+                        ))
                     }
             </div>
         </div>

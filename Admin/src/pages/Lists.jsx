@@ -25,7 +25,6 @@ const Lists = () => {
         {},
         { withCredentials: true }
       );
-
       if (result.data) {
         fetchList();
       } else {
@@ -45,11 +44,10 @@ const Lists = () => {
       <Nav />
       <div className="w-[100%] h-[100%] flex items-start justify-start">
         <SideBar />
-        <div className="w-[82%] h-[100%] lg:ml-[320px] md:ml-[230px] mt-[70px] flex flex-col gap-[30px] overflow-x-hidden py-[50px]">
+        <div className="w-[82%] h-[100%] lg:ml-[320px] md:ml-[230px] mt-[70px] flex flex-col gap-8 md:gap-10 lg:gap-20 overflow-x-hidden py-[50px]">
           <div className="w-[400px] h-[50px] text-[28px] md:text-[32px] text-white mb-[20px]">
             All Listed Products
           </div>
-
           {list && list.length > 0 ? (
             list.map((item, index) => (
               <div
@@ -72,7 +70,6 @@ const Lists = () => {
                     </div>
                   </div>
                 </div>
-
                 {/* Remove Button */}
                 <span
                   className="w-[35px] h-[30px] flex items-center justify-center rounded-md md:hover:bg-red-300 md:hover:text-black cursor-pointer"
