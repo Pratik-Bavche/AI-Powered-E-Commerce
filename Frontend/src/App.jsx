@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Collections from "./pages/Collections";
 import Product from "./pages/Product";
 import Contact from "./pages/Contact";
+import ProductDetail from "./pages/ProductDetail";
 
 const App = () => {
   const { userData } = useContext(userDataContext);
@@ -91,7 +92,21 @@ const App = () => {
             )
           }
         />
+
+
+        <Route
+          path="/productDetail/:productId"
+          element={
+            userData ? (
+              <ProductDetail/>
+            ) : (
+              <Navigate to="/login" state={{ from: location.pathname }} replace />
+            )
+          }
+        />
       </Routes>
+
+      
     </>
   );
 };

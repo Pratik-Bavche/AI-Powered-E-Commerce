@@ -3,6 +3,9 @@ import Nav from '../components/Nav';
 import Background from '../components/Background';
 import Hero from '../components/Hero';
 import Product from './Product';
+import OurPolicy from '../components/OurPolicy';
+import NewLetterBox from '../components/NewLetterBox';
+import Footer from '../components/Footer';
 
 const Home = () => {
   const heroData = [
@@ -29,6 +32,9 @@ const Home = () => {
         <Nav />
       </div>
       <Product/>
+      <OurPolicy/>
+      <NewLetterBox/>
+      <Footer/>
     </div>
   );
 }
