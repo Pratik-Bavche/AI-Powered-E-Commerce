@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { shopDataContext } from '../context/ShopContext';
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import RelatedProduct from '../components/RelatedProduct';
 
 const ProductDetail = () => {
     let { productId } = useParams();
@@ -113,7 +114,8 @@ const ProductDetail = () => {
   who value both fashion and function.
 </p>
 
-                </div> I
+                </div> 
+                <RelatedProduct category={productData.category} subCategory={productData.subCategory} currentProductId={productData._id}/>
             </div>
         </div>
     ) : <div className='opacity-0'></div>;
