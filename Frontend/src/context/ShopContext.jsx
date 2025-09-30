@@ -9,6 +9,7 @@ const ShopContext = ({ children }) => {
     let [search, setSearch] = useState("");
     let [showSearch, setShowSearch] = useState(false);
     let { serverUrl } = useContext(authDataContext);
+    let [cartItem, setCartItem] = useState({});
     let currency = "₹";
     let deliver_fee = 50;
 
@@ -22,12 +23,60 @@ const ShopContext = ({ children }) => {
         }
     };
 
+    const addtoCart = async (itemId, size) => {
+        if (!size) {
+            console.log("Select product size");
+            return;
+        }
+        let cartData = structuredClone(cartItem);
+
+        if (cartData[itemId]) {
+            if (cartData[itemId][size]) {
+                cartData[itemId][size] += 1;
+            } else {
+                cartData[itemId][size] = 1;
+            }
+        } else {
+            cartData[itemId] = {};
+            cartData[itemId][size] = 1;
+        }
+
+        setCartItem(cartData);
+        console.log(cartData);
+    }
+
+    const getCartCount = () => {
+        let totalCount = 0;
+        for (const itemId in cartItem) {
+            for (const size in cartItem[itemId]) {
+                try {
+                    if (cartItem[itemId][size] > 0) {
+                        totalCount += cartItem[itemId][size];
+                    }
+                } catch (error) {}
+            }
+        }
+        return totalCount;
+
+    }
+
     useEffect(() => {
         getProduct();
     }, []);
 
     let value = {
-        products, currency, deliver_fee, getProduct, search, setSearch, showSearch, setShowSearch
+        products,
+        currency,
+        deliver_fee,
+        getProduct,
+        search,
+        setSearch,
+        showSearch,
+        setShowSearch,
+        addtoCart,
+        getCartCount,
+        setCartItem,
+        cartItem
     };
 
     return (

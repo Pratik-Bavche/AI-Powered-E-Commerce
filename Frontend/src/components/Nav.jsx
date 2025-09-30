@@ -14,7 +14,7 @@ import { shopDataContext } from '../context/ShopContext';
 const Nav = () => {
   let { getCurrentUser, userData } = useContext(userDataContext);
   let { serverUrl } = useContext(authDataContext);
-  const { showSearch, setShowSearch, search, setSearch } = useContext(shopDataContext);
+  const { showSearch, setShowSearch, search, setSearch ,getCartCount} = useContext(shopDataContext);
 
   const [showProfile, setShowProfile] = useState(false);
   let navigate = useNavigate();
@@ -64,7 +64,7 @@ const Nav = () => {
         <div className='relative'>
           <MdOutlineShoppingCart className='w-[30px] h-[30px] text-[#000000] cursor-pointer hidden md:block' />
           <span className='absolute hidden md:flex -top-1 -right-1 w-[18px] h-[18px] items-center justify-center bg-black text-white text-[9px] rounded-full'>
-            10
+            {getCartCount()}
           </span>
         </div>
       </div>
