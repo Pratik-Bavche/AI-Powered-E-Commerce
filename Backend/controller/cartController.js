@@ -1,3 +1,5 @@
+import User from "../model/userModel.js";
+
 export const addToCart = async (req, res) => {
     try {
         const { itemId, size } = req.body;
@@ -38,7 +40,17 @@ export const updateCart = async (req, res) => {
 
         let cartData = userData.cartData || {};
         if (!cartData[itemId]) cartData[itemId] = {};
-        cartData[itemId][size] = quantity;
+        
+        if (quantity <= 0) {
+            // Remove the size from cart if quantity is 0 or less
+            delete cartData[itemId][size];
+            // If no sizes left for this item, remove the entire item
+            if (Object.keys(cartData[itemId]).length === 0) {
+                delete cartData[itemId];
+            }
+        } else {
+            cartData[itemId][size] = quantity;
+        }
 
         await User.findByIdAndUpdate(req.userId, { cartData });
         return res.status(201).json({ message: "Cart updated" });

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { authDataContext } from './authContext';
 import axios from 'axios';
 import { userDataContext } from './userContext';
+import Toast from '../components/Toast';
 
 export const shopDataContext = createContext();
 
@@ -12,8 +13,17 @@ const ShopContext = ({ children }) => {
     const { serverUrl } = useContext(authDataContext); 
     const { userData } = useContext(userDataContext);
     const [cartItem, setCartItem] = useState({});
+    const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' });
     const currency = "₹";
     const deliver_fee = 50;
+
+    const showToast = (message, type = 'success') => {
+        setToast({ isVisible: true, message, type });
+    };
+
+    const hideToast = () => {
+        setToast({ isVisible: false, message: '', type: 'success' });
+    };
 
     const getProduct = async () => {
         try {
@@ -26,7 +36,10 @@ const ShopContext = ({ children }) => {
     };
 
     const addtoCart = async (itemId, size) => {
-        if (!size) return console.log("Select product size");
+        if (!size) {
+            showToast("Please select a product size", "error");
+            return;
+        }
 
         let cartData = structuredClone(cartItem);
 
@@ -38,16 +51,17 @@ const ShopContext = ({ children }) => {
 
         setCartItem(cartData);
 
-        if (userData) {
-            try {
-                await axios.post(
-                    serverUrl + '/api/cart/add',
-                    { itemId, size },
-                    { withCredentials: true }
-                );
-            } catch (error) {
-                console.log(error); 
-            }
+        // Always try to save to database since user must be authenticated to access this page
+        try {
+            await axios.post(
+                serverUrl + '/api/cart/add',
+                { itemId, size },
+                { withCredentials: true }
+            );
+            showToast("Product added to cart successfully!");
+        } catch (error) {
+            console.log(error);
+            showToast("Failed to add product to cart", "error");
         }
     };
 
@@ -72,19 +86,31 @@ const ShopContext = ({ children }) => {
 
     const UpdateQuantity = async (itemId, size, quantity) => {
         let cartData = structuredClone(cartItem);
-        cartData[itemId][size] = quantity;
+        
+        if (quantity <= 0) {
+            // Remove the size from cart if quantity is 0 or less
+            if (cartData[itemId]) {
+                delete cartData[itemId][size];
+                // If no sizes left for this item, remove the entire item
+                if (Object.keys(cartData[itemId]).length === 0) {
+                    delete cartData[itemId];
+                }
+            }
+        } else {
+            cartData[itemId][size] = quantity;
+        }
+        
         setCartItem(cartData);
 
-        if (userData) {
-            try {
-                await axios.post(
-                    serverUrl + "/api/cart/update",
-                    { itemId, size, quantity },
-                    { withCredentials: true }
-                );
-            } catch (error) {
-                console.log(error);
-            }
+        // Always try to save to database since user must be authenticated to access this page
+        try {
+            await axios.post(
+                serverUrl + "/api/cart/update",
+                { itemId, size, quantity },
+                { withCredentials: true }
+            );
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -118,12 +144,20 @@ const ShopContext = ({ children }) => {
         getCartCount,
         getCartAmount,
         setCartItem,
-        cartItem
+        cartItem,
+        showToast,
+        hideToast
     };
 
     return (
         <shopDataContext.Provider value={value}>
             {children}
+            <Toast 
+                isVisible={toast.isVisible} 
+                message={toast.message} 
+                type={toast.type} 
+                onClose={hideToast} 
+            />
         </shopDataContext.Provider>
     );
 };

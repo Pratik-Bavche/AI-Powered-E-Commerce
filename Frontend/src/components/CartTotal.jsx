@@ -8,29 +8,29 @@ function CartTotal() {
   const total = subtotal + deliver_fee;
 
   return (
-    <div className='w-full lg:ml-[30px]'>
+    <div className='w-full bg-[#51808048] rounded-2xl p-6 border border-[#4d8890]'>
       {/* Title */}
-      <div className='text-xl py-[10px]'>
+      <div className='text-center mb-6'>
         <Title text1={'CART'} text2={'TOTALS'} />
       </div>
 
       {/* Cart Totals Box */}
-      <div className='flex flex-col gap-2 mt-2 text-sm p-[30px] border-[2px] border-[#4d8890]'>
-        <div className='flex justify-between text-white text-[18px] p-[10px]'>
-          <p>Subtotal</p>
-          <p>{currency} {subtotal.toFixed(2)}</p>
+      <div className='space-y-4'>
+        <div className='flex justify-between items-center py-3 px-4 bg-[#3336397c] rounded-lg'>
+          <span className='text-white text-lg font-medium'>Subtotal</span>
+          <span className='text-white text-lg font-semibold'>{currency} {subtotal.toFixed(2)}</span>
         </div>
-        <hr />
 
-        <div className='flex justify-between text-white text-[18px] p-[10px]'>
-          <p>Shipping Fee</p>
-          <p>{currency} {deliver_fee.toFixed(2)}</p>
+        <div className='flex justify-between items-center py-3 px-4 bg-[#3336397c] rounded-lg'>
+          <span className='text-white text-lg font-medium'>Shipping Fee</span>
+          <span className='text-white text-lg font-semibold'>{currency} {deliver_fee.toFixed(2)}</span>
         </div>
-        <hr />
 
-        <div className='flex justify-between text-white text-[18px] p-[10px]'>
-          <b>Total</b>
-          <b>{currency} {total.toFixed(2)}</b>
+        <div className='border-t-2 border-[#4d8890] pt-4'>
+          <div className='flex justify-between items-center py-3 px-4 bg-[#2a4a4a] rounded-lg'>
+            <span className='text-white text-xl font-bold'>Total</span>
+            <span className='text-white text-xl font-bold'>{currency} {total.toFixed(2)}</span>
+          </div>
         </div>
       </div>
     </div>
