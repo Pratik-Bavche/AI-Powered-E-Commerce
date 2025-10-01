@@ -10,6 +10,8 @@ import Collections from "./pages/Collections";
 import Product from "./pages/Product";
 import Contact from "./pages/Contact";
 import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import PlaceOrder from "./pages/PlaceOrder";
 
 const App = () => {
   const { userData } = useContext(userDataContext);
@@ -99,6 +101,30 @@ const App = () => {
           element={
             userData ? (
               <ProductDetail/>
+            ) : (
+              <Navigate to="/login" state={{ from: location.pathname }} replace />
+            )
+          }
+        />
+
+
+        <Route
+          path="/cart"
+          element={
+            userData ? (
+              <Cart/>
+            ) : (
+              <Navigate to="/login" state={{ from: location.pathname }} replace />
+            )
+          }
+        />
+
+
+         <Route
+          path="/placeorder"
+          element={
+            userData ? (
+              <PlaceOrder/>
             ) : (
               <Navigate to="/login" state={{ from: location.pathname }} replace />
             )

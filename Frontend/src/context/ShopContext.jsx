@@ -1,21 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { authDataContext } from './authContext';
 import axios from 'axios';
+import { userDataContext } from './userContext';
 
 export const shopDataContext = createContext();
 
 const ShopContext = ({ children }) => {
-    let [products, setProducts] = useState([]);
-    let [search, setSearch] = useState("");
-    let [showSearch, setShowSearch] = useState(false);
-    let { serverUrl } = useContext(authDataContext);
-    let [cartItem, setCartItem] = useState({});
-    let currency = "₹";
-    let deliver_fee = 50;
+    const [products, setProducts] = useState([]);
+    const [search, setSearch] = useState("");
+    const [showSearch, setShowSearch] = useState(false);
+    const { serverUrl } = useContext(authDataContext); 
+    const { userData } = useContext(userDataContext);
+    const [cartItem, setCartItem] = useState({});
+    const currency = "₹";
+    const deliver_fee = 50;
 
     const getProduct = async () => {
         try {
-            let result = await axios.get(serverUrl + "/api/product/list");
+            const result = await axios.get(serverUrl + "/api/product/list");
             console.log(result.data);
             setProducts(result.data);
         } catch (error) {
@@ -24,47 +26,85 @@ const ShopContext = ({ children }) => {
     };
 
     const addtoCart = async (itemId, size) => {
-        if (!size) {
-            console.log("Select product size");
-            return;
-        }
+        if (!size) return console.log("Select product size");
+
         let cartData = structuredClone(cartItem);
 
         if (cartData[itemId]) {
-            if (cartData[itemId][size]) {
-                cartData[itemId][size] += 1;
-            } else {
-                cartData[itemId][size] = 1;
-            }
+            cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
         } else {
-            cartData[itemId] = {};
-            cartData[itemId][size] = 1;
+            cartData[itemId] = { [size]: 1 };
         }
 
         setCartItem(cartData);
-        console.log(cartData);
-    }
+
+        if (userData) {
+            try {
+                await axios.post(
+                    serverUrl + '/api/cart/add',
+                    { itemId, size },
+                    { withCredentials: true }
+                );
+            } catch (error) {
+                console.log(error); 
+            }
+        }
+    };
+
+    const getUserCart = async () => {
+        try {
+            const result = await axios.post(serverUrl + '/api/cart/get', {}, { withCredentials: true });
+            setCartItem(result.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const getCartCount = () => {
         let totalCount = 0;
         for (const itemId in cartItem) {
             for (const size in cartItem[itemId]) {
-                try {
-                    if (cartItem[itemId][size] > 0) {
-                        totalCount += cartItem[itemId][size];
-                    }
-                } catch (error) {}
+                totalCount += cartItem[itemId][size] || 0;
             }
         }
         return totalCount;
+    };
 
-    }
+    const UpdateQuantity = async (itemId, size, quantity) => {
+        let cartData = structuredClone(cartItem);
+        cartData[itemId][size] = quantity;
+        setCartItem(cartData);
 
-    useEffect(() => {
-        getProduct();
-    }, []);
+        if (userData) {
+            try {
+                await axios.post(
+                    serverUrl + "/api/cart/update",
+                    { itemId, size, quantity },
+                    { withCredentials: true }
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    };
 
-    let value = {
+    const getCartAmount = () => {
+        let totalAmount = 0;
+        for (const itemId in cartItem) {
+            const itemInfo = products.find((product) => product._id === itemId);
+            if (!itemInfo) continue;
+
+            for (const size in cartItem[itemId]) {
+                totalAmount += (itemInfo.price || 0) * (cartItem[itemId][size] || 0);
+            }
+        }
+        return totalAmount;
+    };
+
+    useEffect(() => { getProduct(); }, []);
+    useEffect(() => { getUserCart(); }, []);
+
+    const value = {
         products,
         currency,
         deliver_fee,
@@ -74,7 +114,9 @@ const ShopContext = ({ children }) => {
         showSearch,
         setShowSearch,
         addtoCart,
+        UpdateQuantity, 
         getCartCount,
+        getCartAmount,
         setCartItem,
         cartItem
     };
