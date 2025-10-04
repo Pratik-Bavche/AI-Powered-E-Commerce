@@ -4,7 +4,7 @@ import adminAuth from '../middleware/adminAuth.js';
 
 const productRoutes = express.Router();
 
-productRoutes.post("/addproduct", addProduct);
+productRoutes.post("/addproduct", adminAuth, addProduct);
 
 productRoutes.get("/list", listProduct);
 

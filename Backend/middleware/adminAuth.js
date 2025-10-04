@@ -2,13 +2,18 @@ import jwt from "jsonwebtoken";
 
 const adminAuth = (req, res, next) => {
   try {
-    const { token } = req.cookies;
-    if (!token) return res.status(401).json({ message: "Not authorized" });
+    const { adminToken } = req.cookies;
+    if (!adminToken) return res.status(401).json({ message: "Not authorized" });
 
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    const verified = jwt.verify(adminToken, process.env.JWT_SECRET);
     if (!verified) return res.status(401).json({ message: "Invalid token" });
 
-    req.adminEmail = process.env.ADMIN_EMAIL;
+    // Check if the token belongs to admin
+    if (verified.email !== process.env.ADMIN_EMAIL) {
+      return res.status(401).json({ message: "Not authorized - Admin access required" });
+    }
+
+    req.adminEmail = verified.email;
     next();
   } catch (error) {
     console.error("adminAuth error:", error);

@@ -12,10 +12,23 @@ import Contact from "./pages/Contact";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import PlaceOrder from "./pages/PlaceOrder";
+import Order from "./pages/Order";
 
 const App = () => {
-  const { userData } = useContext(userDataContext);
+  const { userData, isCheckingAuth } = useContext(userDataContext);
   const location = useLocation();
+
+  // Show loading while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-l from-[#141414] to-[#0c2025] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -50,7 +63,11 @@ const App = () => {
             userData ? (
               <Home />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
@@ -60,7 +77,11 @@ const App = () => {
             userData ? (
               <About />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
@@ -70,7 +91,11 @@ const App = () => {
             userData ? (
               <Collections />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
@@ -80,7 +105,11 @@ const App = () => {
             userData ? (
               <Product />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
@@ -90,49 +119,75 @@ const App = () => {
             userData ? (
               <Contact />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
-
 
         <Route
           path="/productDetail/:productId"
           element={
             userData ? (
-              <ProductDetail/>
+              <ProductDetail />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
-
 
         <Route
           path="/cart"
           element={
             userData ? (
-              <Cart/>
+              <Cart />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
 
-
-         <Route
+        <Route
           path="/placeorder"
           element={
             userData ? (
-              <PlaceOrder/>
+              <PlaceOrder />
             ) : (
-              <Navigate to="/login" state={{ from: location.pathname }} replace />
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
+            )
+          }
+        />
+
+        <Route
+          path="/order"
+          element={
+            userData ? (
+              <Order />
+            ) : (
+              <Navigate
+                to="/login"
+                state={{ from: location.pathname }}
+                replace
+              />
             )
           }
         />
       </Routes>
-
-      
     </>
   );
 };

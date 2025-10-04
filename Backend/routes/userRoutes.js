@@ -6,8 +6,8 @@ import adminAuth from "../middleware/adminAuth.js"
 
 let userRoutes=express.Router()
 
-userRoutes.post("/getcurrentuser",isAuth,getCurrentUser)
-userRoutes.post("/getadmin",adminAuth,getAdmin)
+userRoutes.get("/getcurrentuser",isAuth,getCurrentUser)
+userRoutes.get("/getadmin",adminAuth,getAdmin)
 
 
 export default userRoutes;

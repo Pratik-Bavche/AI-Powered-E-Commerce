@@ -35,7 +35,7 @@ export const registration = async (req, res) => {
     const token = genToken(user._id);
 
     // store in cookie
-    res.cookie("token", token, {
+    res.cookie("userToken", token, {
       httpOnly: true,
       secure: false, // change to true in production
       sameSite: "Strict",
@@ -67,7 +67,7 @@ export const login = async (req, res) => {
 
     const token = genToken(user._id);
 
-    res.cookie("token", token, {
+    res.cookie("userToken", token, {
       httpOnly: true,
       secure: false,
       sameSite: "Strict",
@@ -84,7 +84,7 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("token", {
+    res.clearCookie("userToken", {
       httpOnly: true,
       secure: false, // set true in production with HTTPS
       sameSite: "Strict"
@@ -109,7 +109,7 @@ export const googleLogin = async (req, res) => {
     const token = genToken(user._id);
 
    
-    res.cookie("token", token, {
+    res.cookie("userToken", token, {
       httpOnly: true,
       secure: false, 
       sameSite: "Strict",
@@ -131,11 +131,11 @@ export const adminLogin = async (req, res) => {
     const { email, password } = req.body;
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASS) {
       const token = genToken1(email);
-      res.cookie("token", token, {
+      res.cookie("adminToken", token, {
         httpOnly: true,
         secure: false, // true in production
         sameSite: "Strict",
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days to match JWT expiration
       });
       return res.status(200).json({ token }); // return object
     }

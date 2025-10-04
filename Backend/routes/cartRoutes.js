@@ -4,7 +4,7 @@ import { addToCart, getUserCart, updateCart } from '../controller/cartController
 
 const cartRoutes=express.Router();
 
-cartRoutes.post('/get',isAuth,getUserCart);
+cartRoutes.get('/get',isAuth,getUserCart);
 cartRoutes.post('/add',isAuth,addToCart);
 cartRoutes.post('/update',isAuth,updateCart);
 

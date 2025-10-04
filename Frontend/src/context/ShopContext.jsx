@@ -67,10 +67,11 @@ const ShopContext = ({ children }) => {
 
     const getUserCart = async () => {
         try {
-            const result = await axios.post(serverUrl + '/api/cart/get', {}, { withCredentials: true });
-            setCartItem(result.data);
+            const result = await axios.get(serverUrl + '/api/cart/get', { withCredentials: true });
+            setCartItem(result.data || {});
         } catch (error) {
             console.log(error);
+            setCartItem({});
         }
     };
 
@@ -128,7 +129,11 @@ const ShopContext = ({ children }) => {
     };
 
     useEffect(() => { getProduct(); }, []);
-    useEffect(() => { getUserCart(); }, []);
+    useEffect(() => { 
+        if (userData && userData._id) {
+            getUserCart(); 
+        }
+    }, [userData]);
 
     const value = {
         products,
@@ -146,7 +151,8 @@ const ShopContext = ({ children }) => {
         setCartItem,
         cartItem,
         showToast,
-        hideToast
+        hideToast,
+        getUserCart
     };
 
     return (

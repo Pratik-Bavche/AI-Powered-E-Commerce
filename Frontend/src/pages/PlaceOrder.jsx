@@ -5,10 +5,11 @@ import razorpayImg from "../assets/image.png";
 import { shopDataContext } from "../context/ShopContext";
 import { authDataContext } from "../context/authContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
-
+  let navigate = useNavigate();
   const { cartItem, setCartItem, getCartAmount, deliver_fee, products } =
     useContext(shopDataContext);
   const { serverUrl } = useContext(authDataContext);
@@ -68,10 +69,10 @@ const PlaceOrder = () => {
             { withCredentials: true }
           );
           console.log(result.data);
-          if (result.data.message === "Order Place") {
+          if (result.data.message === "Order Placed") {
             setCartItem({});
             alert("Order placed successfully!");
-            window.location.href = "/";
+            navigate("/order");
           }
           break;
         default:

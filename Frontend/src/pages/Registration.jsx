@@ -27,7 +27,7 @@ const Registration = () => {
 
       console.log(result.data);
       if (result.data._id || result.data.user?._id) {
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       console.log(error);

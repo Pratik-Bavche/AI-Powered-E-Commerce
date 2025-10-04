@@ -1,35 +1,65 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authDataContext } from './AuthContext';
-import axios from 'axios';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { authDataContext } from "./AuthContext";
+import axios from "axios";
 
 export const adminDataContext = createContext();
 
 function AdminContext({ children }) {
   const [adminData, setAdminData] = useState(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const { serverUrl } = useContext(authDataContext);
 
   const getAdmin = async () => {
-    if (!serverUrl) return;
+    if (!serverUrl) return null;
+    setIsCheckingAuth(true);
     try {
-      const result = await axios.post(
-        `${serverUrl}/api/user/getadmin`,
-        {}, // empty body
-        { withCredentials: true }
-      );
+      console.log("Checking admin authentication...");
+      const result = await axios.get(`${serverUrl}/api/user/getadmin`, {
+        withCredentials: true,
+      });
       setAdminData(result.data);
       console.log("Admin Data:", result.data);
+      return result.data;
     } catch (error) {
+      console.log(
+        "Admin not authenticated:",
+        error.response?.data?.message || error.message
+      );
       setAdminData(null);
-      console.error("getAdmin error:", error.response?.data || error.message);
+      return null;
+    } finally {
+      setIsCheckingAuth(false);
     }
   };
 
+  // Only check authentication if serverUrl is available
   useEffect(() => {
-    getAdmin();
+    if (serverUrl) {
+      getAdmin();
+    }
+  }, [serverUrl]);
+
+  // Check authentication on page refresh/reload
+  useEffect(() => {
+    const handleStorageChange = () => {
+      if (serverUrl) {
+        getAdmin();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("focus", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("focus", handleStorageChange);
+    };
   }, [serverUrl]);
 
   return (
-    <adminDataContext.Provider value={{ adminData, setAdminData, getAdmin }}>
+    <adminDataContext.Provider
+      value={{ adminData, setAdminData, getAdmin, isCheckingAuth }}
+    >
       {children}
     </adminDataContext.Provider>
   );
