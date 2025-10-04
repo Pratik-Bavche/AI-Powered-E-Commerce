@@ -13,6 +13,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import PlaceOrder from "./pages/PlaceOrder";
 import Order from "./pages/Order";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const { userData, isCheckingAuth } = useContext(userDataContext);
@@ -187,6 +188,9 @@ const App = () => {
             )
           }
         />
+
+        {/* 404 Route - Catch all unmatched routes */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
