@@ -16,7 +16,13 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:3000", "http://localhost:5173","http://localhost:5174","http://localhost:5175"],
+    origin: [
+        "http://localhost:3000", 
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "https://ai-powered-e-commerce-server.vercel.app"
+    ],
     credentials: true
 }));
 
