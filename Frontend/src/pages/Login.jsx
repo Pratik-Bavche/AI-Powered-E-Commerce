@@ -57,6 +57,13 @@ const Login = () => {
 
   // Google login
   const googleLogin = async () => {
+    // If Firebase is not configured, show an informative toast instead of throwing
+    if (!auth || !provider) {
+      console.warn("Google auth is not configured. Skipping sign-in.");
+      showToast("Google sign-in is not configured. Set VITE_FIREBASE_APIKEY.", "error");
+      return;
+    }
+
     try {
       const response = await signInWithPopup(auth, provider);
       const { displayName, email } = response.user;

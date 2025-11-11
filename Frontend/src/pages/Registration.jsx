@@ -53,6 +53,12 @@ const Registration = () => {
   };
 
   const googleSignUp = async () => {
+    if (!auth || !provider) {
+      console.warn("Google auth is not configured. Skipping sign-up.");
+      showToast("Google sign-up is not configured. Set VITE_FIREBASE_APIKEY.", "error");
+      return;
+    }
+
     try {
       const response = await signInWithPopup(auth, provider);
       const { displayName, email } = response.user;
