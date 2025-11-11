@@ -4,10 +4,11 @@ import google from "../assets/google.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { IoMdEye, IoIosEyeOff } from "react-icons/io";
-import { authDataContext } from "../context/authContext";
+import { authDataContext } from "../context/AuthContext";
 import { auth, provider } from "../../utils/Firebase";
 import { signInWithPopup } from "firebase/auth";
 import { userDataContext } from "../context/userContext";
+import { toastContext } from "../context/ToastContext";
 
 const Login = () => {
   const [show, setShow] = useState(false);
@@ -16,7 +17,8 @@ const Login = () => {
   const { serverUrl } = useContext(authDataContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const { getCurrentUser } = useContext(userDataContext);
+  const { getCurrentUser, setUserData } = useContext(userDataContext);
+  const { showToast } = useContext(toastContext);
 
   // Normal email/password login
   const handleLogin = async (e) => {
@@ -28,12 +30,28 @@ const Login = () => {
         { withCredentials: true }
       );
       console.log("Login response:", result.data);
-      if (result.data.user?._id) {
-        await getCurrentUser();
+      const user = result.data.user || result.data;
+      if (user?._id) {
+        // set user in context immediately so UI updates even if cookie-based check
+        // takes a moment or is blocked by cookie issues in some dev setups
+        try {
+          setUserData(user);
+        } catch (e) {
+          console.warn('Failed to set userData in context:', e);
+        }
+        // still try to refresh from server if needed
+        try {
+          await getCurrentUser();
+        } catch (e) {
+          console.warn('getCurrentUser failed after login:', e);
+        }
+        showToast("Login successful!", "success");
         navigate(location.state?.from || "/"); // redirect to last page or home
       }
     } catch (error) {
-      console.log("Login error:", error);
+      console.log("Login error:", error.response?.data || error.message || error);
+      const msg = error.response?.data?.message || error.message || 'Login failed';
+      showToast(msg, "error");
     }
   };
 
@@ -48,12 +66,25 @@ const Login = () => {
         { withCredentials: true }
       );
       console.log("Google login response:", result.data);
-      if (result.data.user?._id) {
-        await getCurrentUser();
+      const user = result.data.user || result.data;
+      if (user?._id) {
+        try {
+          setUserData(user);
+        } catch (e) {
+          console.warn('Failed to set userData in context (google):', e);
+        }
+        try {
+          await getCurrentUser();
+        } catch (e) {
+          console.warn('getCurrentUser failed after google login:', e);
+        }
+        showToast("Google login successful!", "success");
         navigate(location.state?.from || "/"); // redirect after google login
       }
     } catch (error) {
-      console.log("Google login error:", error);
+      console.log("Google login error:", error.response?.data || error.message || error);
+      const msg = error.response?.data?.message || error.message || 'Google login failed';
+      showToast(msg, "error");
     }
   };
 

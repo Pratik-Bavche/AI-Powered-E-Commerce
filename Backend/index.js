@@ -33,8 +33,28 @@ app.use("/api/order", orderRoutes);
 
 const PORT = process.env.PORT || 8000;
 
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
+// Start server only after DB is connected. If DB connection fails, exit with non-zero code
+const start = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } catch (err) {
+        console.error("Failed to start server due to DB connection error:", err && err.message ? err.message : err);
+        // give a short moment for logs to flush
+        setTimeout(() => process.exit(1), 100);
+    }
+};
+
+// Global process handlers for better debugging of crashes/unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception thrown:', err);
+    // Exit — the process may be in an unknown state
+    setTimeout(() => process.exit(1), 100);
+});
+
+start();

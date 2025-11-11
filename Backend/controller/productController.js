@@ -1,8 +1,13 @@
+import mongoose from "mongoose";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import Product from "../model/productModel.js";
 
 export const addProduct = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            console.error('AddProduct attempted while DB not connected. readyState=', mongoose.connection.readyState);
+            return res.status(503).json({ message: 'Service unavailable: database not connected' });
+        }
         let { name, description, price, category, subCategory, sizes, bestseller, images } = req.body;
 
         // Upload base64 images to Cloudinary
@@ -67,6 +72,10 @@ export const addProduct = async (req, res) => {
 
 export const listProduct = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            console.error('ListProduct attempted while DB not connected. readyState=', mongoose.connection.readyState);
+            return res.status(503).json({ message: 'Service unavailable: database not connected' });
+        }
         const product = await Product.find({});
         return res.status(200).json(product);
     } catch (error) {
@@ -77,6 +86,10 @@ export const listProduct = async (req, res) => {
 
 export const removeProduct = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            console.error('RemoveProduct attempted while DB not connected. readyState=', mongoose.connection.readyState);
+            return res.status(503).json({ message: 'Service unavailable: database not connected' });
+        }
         let { id } = req.params;
         const product = await Product.findByIdAndDelete(id);
         return res.status(200).json(product);

@@ -7,6 +7,16 @@ export default defineConfig({
   plugins: [react(),tailwindcss()],
   server: {
     port: 3000,
-    host: true
+    host: true,
+    // Proxy API requests to the backend during development so the browser treats
+    // them as same-origin and httpOnly cookies can be set by the server.
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path,
+      },
+    },
   }
 })

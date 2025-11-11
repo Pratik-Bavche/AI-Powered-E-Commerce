@@ -12,7 +12,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   let { serverUrl } = useContext(authDataContext);
-  let { AdminData, getAdmin } = useContext(adminDataContext);
+  let { setAdminData, getAdmin } = useContext(adminDataContext);
   let navigate = useNavigate();
 
   const AdminLogin = async (e) => {
@@ -21,21 +21,39 @@ const Login = () => {
     setError("");
 
     try {
+      const url = serverUrl + "/api/auth/adminlogin";
+      console.log("Admin login URL:", url);
+      console.log("Admin login credentials:", { email });
+      
       const result = await axios.post(
-        serverUrl + "/api/auth/adminlogin",
+        url,
         { email, password },
         { withCredentials: true }
       );
       console.log("Admin login result:", result.data);
 
       if (result.data.token) {
-        await getAdmin();
+        // Set admin data directly from the token (contains email)
+        // Parse JWT to extract email without needing another call
+        try {
+          const decoded = JSON.parse(atob(result.data.token.split('.')[1]));
+          console.log("Token decoded:", decoded);
+          setAdminData({ email: decoded.email, role: "admin" });
+        } catch (e) {
+          console.warn('Failed to decode token:', e);
+        }
+        // Still try to refresh from server if needed
+        try {
+          await getAdmin();
+        } catch (e) {
+          console.warn('getAdmin failed after login:', e);
+        }
         navigate("/");
       } else {
         setError("Login failed. Please try again.");
       }
     } catch (error) {
-      console.log("Admin login error:", error);
+      console.log("Admin login error:", error.response?.data || error.message || error);
       setError(
         error.response?.data?.message ||
           "Login failed. Please check your credentials."

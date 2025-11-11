@@ -4,13 +4,17 @@ import google from "../assets/google.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoMdEye, IoIosEyeOff } from "react-icons/io";
-import { authDataContext } from "../context/authContext";
+import { authDataContext } from "../context/AuthContext";
+import { userDataContext } from "../context/userContext";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/Firebase";
+import { toastContext } from "../context/ToastContext";
 
 const Registration = () => {
   const [show, setShow] = useState(false);
   const { serverUrl } = useContext(authDataContext);
+  const { setUserData, getCurrentUser } = useContext(userDataContext);
+  const { showToast } = useContext(toastContext);
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,11 +30,25 @@ const Registration = () => {
       );
 
       console.log(result.data);
-      if (result.data._id || result.data.user?._id) {
+      const user = result.data.user || result.data;
+      if (user?._id) {
+        try {
+          setUserData(user);
+        } catch (e) {
+          console.warn('Failed to set userData in context after registration:', e);
+        }
+        try {
+          await getCurrentUser();
+        } catch (e) {
+          console.warn('getCurrentUser failed after registration:', e);
+        }
+        showToast("Registration successful!", "success");
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      console.log('Registration error:', error.response?.data || error.message || error);
+      const msg = error.response?.data?.message || error.message || 'Registration failed';
+      showToast(msg, "error");
     }
   };
 
@@ -45,9 +63,25 @@ const Registration = () => {
         { withCredentials: true }
       );
       console.log(result.data);
-      if (result.data.user?._id) navigate("/"); // redirect after Google signup
+      const user = result.data.user || result.data;
+      if (user?._id) {
+        try {
+          setUserData(user);
+        } catch (e) {
+          console.warn('Failed to set userData in context after google signup:', e);
+        }
+        try {
+          await getCurrentUser();
+        } catch (e) {
+          console.warn('getCurrentUser failed after google signup:', e);
+        }
+        showToast("Google signup successful!", "success");
+        navigate("/");
+      }
     } catch (error) {
-      console.log(error);
+      console.log('Google signup error:', error.response?.data || error.message || error);
+      const msg = error.response?.data?.message || error.message || 'Google signup failed';
+      showToast(msg, "error");
     }
   };
 

@@ -6,16 +6,18 @@ import { MdContacts, MdOutlineShoppingCart } from "react-icons/md";
 import { userDataContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { authDataContext } from "../context/authContext";
+import { authDataContext } from "../context/AuthContext";
+import { toastContext } from "../context/ToastContext";
 import { IoMdHome, IoMdCart } from "react-icons/io";
 import { HiOutlineCollection } from "react-icons/hi";
 import { shopDataContext } from "../context/ShopContext";
 
 const Nav = () => {
-  const { getCurrentUser, userData } = useContext(userDataContext);
+  const { getCurrentUser, userData, setUserData } = useContext(userDataContext);
   const { serverUrl } = useContext(authDataContext);
   const { showSearch, setShowSearch, search, setSearch, getCartCount } =
     useContext(shopDataContext);
+  const { showToast } = useContext(toastContext);
 
   const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
@@ -25,10 +27,12 @@ const Nav = () => {
       await axios.get(serverUrl + "/api/auth/logout", {
         withCredentials: true,
       });
-      await getCurrentUser(); // refresh userData after logout
+      setUserData(null); // clear user from context immediately
+      showToast("Logged out successfully!", "success");
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      console.log("Logout error:", error);
+      showToast("Failed to logout", "error");
     }
   };
 

@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Nav from "./components/Nav";
 import { userDataContext } from "./context/userContext";
+import Toast from "./components/Toast";
+import { toastContext } from "./context/ToastContext";
 import About from "./pages/About";
 import Collections from "./pages/Collections";
 import Product from "./pages/Product";
@@ -19,6 +21,7 @@ import Ai from "./components/Ai";
 const App = () => {
   const { userData, isCheckingAuth } = useContext(userDataContext);
   const location = useLocation();
+  const { isVisible, message, type, hideToast } = useContext(toastContext);
 
   // Show loading while checking authentication
   if (isCheckingAuth) {
@@ -194,6 +197,12 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Ai/>
+      <Toast 
+        isVisible={isVisible} 
+        message={message} 
+        type={type} 
+        onClose={hideToast} 
+      />
     </>
   );
 };
