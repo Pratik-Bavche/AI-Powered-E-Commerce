@@ -15,14 +15,27 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
+// Build allowed origins list from environment or fall back to sensible defaults
+const allowedOrigins = (process.env.ALLOWED_ORIGINS && process.env.ALLOWED_ORIGINS.split(",")) || [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    // Deployed domains (add or override via ALLOWED_ORIGINS env variable)
+    "https://ai-powered-e-commerce-server.vercel.app",
+    "https://ai-powered-e-commerce-client.vercel.app",
+    "https://ai-powered-e-commerce-admin.vercel.app"
+];
+
 app.use(cors({
-    origin: [
-        "http://localhost:3000", 
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "https://ai-powered-e-commerce-server.vercel.app"
-    ],
+    origin: function(origin, callback){
+        // allow requests with no origin (like server-to-server, mobile, or curl)
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(origin) !== -1){
+            return callback(null, true);
+        }
+        return callback(new Error('CORS policy: origin not allowed'));
+    },
     credentials: true
 }));
 

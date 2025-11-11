@@ -3,6 +3,9 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import { genToken, genToken1 } from "../config/token.js";
 
+// Detect production environment to set cookie options for cross-site cookies
+const isProd = process.env.NODE_ENV === 'production';
+
 export const registration = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -39,8 +42,8 @@ export const registration = async (req, res) => {
     // store in cookie
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: false, // change to true in production
-      sameSite: "Strict",
+      secure: isProd, // secure cookies in production (HTTPS)
+      sameSite: isProd ? 'None' : 'Lax', // allow cross-site cookie in production when needed
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -74,8 +77,8 @@ export const login = async (req, res) => {
 
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Strict",
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -92,8 +95,8 @@ export const logout = async (req, res) => {
   try {
     res.clearCookie("userToken", {
       httpOnly: true,
-      secure: false, // set true in production with HTTPS
-      sameSite: "Strict"
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax'
     });
     return res.status(200).json({ message: "Logout successful" });
   } catch (error) {
@@ -119,8 +122,8 @@ export const googleLogin = async (req, res) => {
    
     res.cookie("userToken", token, {
       httpOnly: true,
-      secure: false, 
-      sameSite: "Strict",
+      secure: isProd,
+      sameSite: isProd ? 'None' : 'Lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -146,8 +149,8 @@ export const adminLogin = async (req, res) => {
       
       res.cookie("adminToken", token, {
         httpOnly: true,
-        secure: false, // true in production
-        sameSite: "Strict",
+        secure: isProd,
+        sameSite: isProd ? 'None' : 'Lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days to match JWT expiration
       });
       console.log("**ADMIN LOGIN** token cookie set, returning token");
