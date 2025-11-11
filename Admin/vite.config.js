@@ -12,8 +12,7 @@ export default defineConfig({
     // them as same-origin and httpOnly cookies can be set by the server.
     proxy: {
       '/api': {
-        //target: 'http://localhost:8000',
-        target: 'https://ai-powered-e-commerce-admin.vercel.app/',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path,
