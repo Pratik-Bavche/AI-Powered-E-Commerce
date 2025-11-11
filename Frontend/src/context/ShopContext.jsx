@@ -27,7 +27,8 @@ const ShopContext = ({ children }) => {
 
     const getProduct = async () => {
         try {
-            const result = await axios.get(serverUrl + "/api/product/list");
+            const base = serverUrl || "";
+            const result = await axios.get(base + "/api/product/list");
             console.log(result.data);
             setProducts(result.data);
         } catch (error) {
@@ -54,7 +55,7 @@ const ShopContext = ({ children }) => {
         // Always try to save to database since user must be authenticated to access this page
         try {
             await axios.post(
-                serverUrl + '/api/cart/add',
+                (serverUrl || "") + '/api/cart/add',
                 { itemId, size },
                 { withCredentials: true }
             );
@@ -67,7 +68,8 @@ const ShopContext = ({ children }) => {
 
     const getUserCart = async () => {
         try {
-            const result = await axios.get(serverUrl + '/api/cart/get', { withCredentials: true });
+            const base = serverUrl || "";
+            const result = await axios.get(base + '/api/cart/get', { withCredentials: true });
             setCartItem(result.data || {});
         } catch (error) {
             console.log(error);
@@ -106,7 +108,7 @@ const ShopContext = ({ children }) => {
         // Always try to save to database since user must be authenticated to access this page
         try {
             await axios.post(
-                serverUrl + "/api/cart/update",
+                (serverUrl || "") + "/api/cart/update",
                 { itemId, size, quantity },
                 { withCredentials: true }
             );

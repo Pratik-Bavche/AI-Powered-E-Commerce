@@ -11,13 +11,13 @@ const UserContext = ({ children }) => {
   let [showSearch, setShowSearch] = useState(false);
   const { serverUrl } = useContext(authDataContext);
 
-  // Fetch current user from backend
+  // Fetch current user from backend. Use empty serverUrl to allow Vite proxy ("/api/...") in dev.
   const getCurrentUser = async () => {
-    if (!serverUrl) return null;
+    const base = serverUrl || "";
     setIsCheckingAuth(true);
     try {
       console.log("Checking user authentication...");
-      const result = await axios.get(serverUrl + "/api/user/getcurrentuser", {
+      const result = await axios.get(base + "/api/user/getcurrentuser", {
         withCredentials: true,
       });
       setUserData(result.data);
@@ -35,19 +35,16 @@ const UserContext = ({ children }) => {
     }
   };
 
-  // Call once on mount
+  // Call once on mount (use proxy if `serverUrl` is empty)
   useEffect(() => {
-    if (serverUrl) {
-      getCurrentUser();
-    }
-  }, [serverUrl]);
+    getCurrentUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Check authentication on page refresh/reload
   useEffect(() => {
     const handleStorageChange = () => {
-      if (serverUrl) {
-        getCurrentUser();
-      }
+      getCurrentUser();
     };
 
     window.addEventListener("storage", handleStorageChange);
