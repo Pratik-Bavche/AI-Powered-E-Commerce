@@ -1,18 +1,58 @@
-# AI-Powered-E-Commerce-Website
-I recently built an AI-powered e-commerce platform designed to enhance the online shopping experience through personalization, intelligent search, and automation.
+🚀 AI-Powered E-Commerce Platform – Summary
 
-🔹 Key Features:
+A full-stack, production-ready AI-driven e-commerce solution offering personalized shopping, automated admin tools, and intelligent customer support.
 
-🛒 Personalized Product Recommendations – AI analyzes user behavior and preferences to suggest products tailored to each customer.
+🌟 Highlights
 
-🔍 Intelligent Search – Smart search functionality with natural language understanding for faster and more accurate results.
+Personalized Shopping: AI recommends products based on user behavior.
 
-🤖 AI Chatbot Support – 24/7 customer assistance with instant responses, order tracking, and FAQs.
+24/7 AI Chatbot: Handles FAQs, order tracking, and support.
 
-🔐 Secure Authentication – User-friendly login and signup system with JWT-based authentication.
+Secure Auth: JWT + bcrypt + httpOnly cookies + Google OAuth2.
 
-📦 Order & Cart Management – Smooth checkout flow with dynamic cart updates and order tracking.
+Admin Dashboard: Manage products, orders, users, and analytics.
 
-📊 Admin Dashboard – Manage products, categories, and customer orders efficiently.
+Payment Integration: Razorpay for secure, PCI-compliant payments.
 
-💡 Tech Stack: React.js | Node.js | Express.js | MongoDB | AI/ML for recommendations | Tailwind CSS
+Database Resilience: Auto-retry, timeouts, and graceful degradation.
+
+🏗️ Architecture
+
+Frontend: React 19, Vite, Tailwind CSS, Axios, Firebase
+Backend: Express.js, Node.js, Mongoose, JWT, Cloudinary
+Database: MongoDB Atlas
+Services: Cloudinary, Razorpay, Firebase Auth
+
+💻 Core Features
+
+User auth & Google login
+
+Product catalog & image upload
+
+Cart & checkout with live totals
+
+Order tracking & admin management
+
+AI chatbot for customer support
+
+Global toast notifications
+
+🔐 Security
+
+Hashed passwords & JWT tokens
+
+Secure cookies (SameSite, httpOnly)
+
+Input validation & CORS
+
+Token expiration & session management
+
+⚙️ Deployment
+
+Frontend: Vercel/Netlify
+
+Backend: Railway/Render
+
+Database: MongoDB Atlas
+
+Images: Cloudinary CDN
