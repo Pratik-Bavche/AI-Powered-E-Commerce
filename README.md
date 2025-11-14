@@ -1,4 +1,4 @@
-🚀 AI-Powered E-Commerce Platform – Summary
+# 🚀 AI-Powered E-Commerce Platform – Summary
 
 A full-stack, production-ready AI-driven e-commerce solution offering personalized shopping, automated admin tools, and intelligent customer support.
 
